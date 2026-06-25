@@ -105,6 +105,7 @@ local function GetColorSettings()
 			invalid = E.db.attune.colors.invalid,
 			inProgress = E.db.attune.colors.inProgress,
 			completed = E.db.attune.colors.completed,
+			inactive = E.db.attune.colors.inactive,
 			lastUpdate = E.db.attune
 		}
 	end
@@ -130,13 +131,13 @@ local function ShouldShowAttuneIcon(slot)
 end
 
 function Attune:ToggleAttuneIcon(slot, itemIdOrLink, additionalXMargin)
-	Attune:UpdateItemLevelText(slot, itemIdOrLink)
+	Attune:UpdateItemLevelText(slot, itemIdOrLink) -- needed for guild bank, not needed for bags
 	Attune:AddAtuneIcon(slot)
 	slot.AttuneTexture:Hide()
 	slot.AttuneTextureBorder:Hide()
 	
 	-- ʕ •ᴥ•ʔ✿ Early returns for better performance ✿ ʕ •ᴥ•ʔ
-	if not IsServerApiLoaded() or not E.db.attune.enabled or not itemIdOrLink then
+	if not itemIdOrLink or not E.db.attune.enabled or not IsServerApiLoaded() then
 		return
 	end
 	
@@ -164,14 +165,22 @@ function Attune:ToggleAttuneIcon(slot, itemIdOrLink, additionalXMargin)
 	slot.AttuneTexture:SetPoint("BOTTOMLEFT", xMargin + borderWidth, yMargin + borderWidth)
 	slot.AttuneTexture:SetWidth(width)
 
-	if itemValidStatus == -2 then
-		slot.AttuneTextureBorder:SetHeight(minHeight + borderWidth*2)
-		slot.AttuneTexture:SetHeight(minHeight)
-		slot.AttuneTexture:SetVertexColor(colors.invalid.r, colors.invalid.g, colors.invalid.b)
+	local progress = GetAttuneProgress(itemIdOrLink)
+	
+	if itemValidStatus == -2 or itemValidStatus == -6 then -- -6 unequippable weapons, -2 unequippable armor
+		if progress == 100 then
+			local height = math.max(maxHeight * (progress/100), minHeight)
+			slot.AttuneTextureBorder:SetHeight(height + borderWidth*2)
+			slot.AttuneTexture:SetHeight(height)
+			slot.AttuneTexture:SetVertexColor(colors.inactive.r, colors.inactive.g, colors.inactive.b)
+		else
+			slot.AttuneTextureBorder:SetHeight(minHeight + borderWidth*2)
+			slot.AttuneTexture:SetHeight(minHeight)
+			slot.AttuneTexture:SetVertexColor(colors.invalid.r, colors.invalid.g, colors.invalid.b)
+		end
 		slot.AttuneTextureBorder:Show()
 		slot.AttuneTexture:Show()
 	elseif itemValidStatus == 1 then
-		local progress = GetAttuneProgress(itemIdOrLink)
 		if progress < 100 then
 			local height = math.max(maxHeight * (progress/100), minHeight)
 			slot.AttuneTextureBorder:SetHeight(height + borderWidth*2)

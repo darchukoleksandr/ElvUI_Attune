@@ -338,6 +338,7 @@ L["Show in Bank"] = true
 L["Display attune progress in bank slots."] = true
 L["Show in Character"] = true
 L["Display attune progress in character sheet equipment slots."] = true
+L["Inactive"] = true
 
 ----------------------------------
 L["RED_ENABLE"] = "|cFFff3333Enable|r"

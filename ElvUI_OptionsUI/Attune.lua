@@ -136,6 +136,25 @@ E.Options.args.attune = {
 							E:GetModule("Bags"):UpdateAllBagSlots()
 						end
 					end
+				},
+				inactive = {
+					order = 5,
+					type = "color",
+					name = L["Inactive"],
+					desc = L["Color for fully attuned items that are inactive for current character."],
+					disabled = function() return not E.db.attune.enabled end,
+					get = function(info)
+						local t = E.db.attune.colors.inactive
+						local d = P.attune.colors.inactive
+						return t.r, t.g, t.b, t.a, d.r, d.g, d.b
+					end,
+					set = function(info, r, g, b)
+						local t = E.db.attune.colors.inactive
+						t.r, t.g, t.b = r, g, b
+						if E.Bags.Initialized then
+							E:GetModule("Bags"):UpdateAllBagSlots()
+						end
+					end
 				}
 			}
 		}
