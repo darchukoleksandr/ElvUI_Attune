@@ -219,7 +219,7 @@ function Attune:UpdateItemLevelText(slot, itemIdOrLink)
 		
 		if itemId and itemInfoCache[itemId] then
 			local cached = itemInfoCache[itemId]
-			if cached.level and B.db.itemLevel and 
+			if cached.level and B.db and B.db.itemLevel and 
 			   (cached.equipLoc and cached.equipLoc ~= "" and cached.equipLoc ~= "INVTYPE_AMMO" and 
 			    cached.equipLoc ~= "INVTYPE_BAG" and cached.equipLoc ~= "INVTYPE_QUIVER" and cached.equipLoc ~= "INVTYPE_TABARD") and 
 			   (cached.rarity and cached.rarity > 1) and cached.level >= B.db.itemLevelThreshold then
